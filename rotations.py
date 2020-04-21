@@ -2,7 +2,7 @@
 
 # MIT License
 
-# Copyright (c) 2020 syed343 (GitHub username)
+# Copyright (c) 2020 Syed Shah
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,17 @@ def convert_point(p, width, offset):
 
 def point_to_text(p, name):
     # e.g. "P(100, 97)"
-    return '{%}({%}, {%})'.format(name, int(p[0]), int(p[1]))
+    return '{}({:.0f}, {:.0f})'.format(name, int(p[0]), int(p[1]))
+
+def matrix_to_text(m, name):
+    n = [['{:.2f}'.format(i) for i in j] for j in m]
+    return '{} = (({}, {}), ({}, {}))'.format(name, n[0][0], n[0][1], n[1][0], n[1][1])
+
 
 # P is referred to as p in the code
-p = [float(i) for i in input('Enter point P as a,b: ').split(',')]
+p = [float(i) for i in input('Enter point P as a, b: ').split(',')]
 # t = theta = angle (in degrees) by which P is rotated, centre origin
-t = float(input('Enter angle θ°: '))
+t = float(input('Enter starting value for angle θ°: '))
 
 WIDTH = 500
 OFFSET = int(500/2)
@@ -63,7 +68,7 @@ while True:
     t = (t + 1) % 360
     rt = radians(t)
     # m is a 2x2 matrix
-    m = [[cos(rt), 0 - sin(rt)], [sin(rt), cos(rt)]]
+    m = [[cos(rt), -1 * sin(rt)], [sin(rt), cos(rt)]]
     # P` is referred to as q in the code
     q = image(m, p)
 
@@ -75,7 +80,8 @@ while True:
     # text in the top right of the window
     text = [FONT.render(f'{t}°', True, BLACK),
             FONT.render(point_to_text(p, 'P'), True, BLACK),
-            FONT.render(point_to_text(q, 'P`'), True, BLACK)]
+            FONT.render(point_to_text(q, 'P`'), True, BLACK),
+            FONT.render(matrix_to_text(m, 'M'), True, BLACK)]
 
     for i, tx in enumerate(text):
         DISPLAY.blit(tx, (WIDTH - tx.get_width(), (i + 1) * tx.get_height()))
